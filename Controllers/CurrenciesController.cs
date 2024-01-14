@@ -1,6 +1,6 @@
 ﻿using CryptoCurrencyDemoProject.Data.Interfaces;
 using CryptoCurrencyDemoProject.Data.Models;
-using CryptoCurrencyDemoProject.Services;
+using CryptoCurrencyDemoProject.Data.Services;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,19 +20,31 @@ namespace CryptoCurrencyDemoProject.Controllers
 
         // GET: api/<CurrenciesController>
         [HttpGet]
-        public async Task<ActionResult<List<CryptocurrencyModel>>> SelectAll()
+        public async Task<ActionResult<List<CurrencyModel>>> SelectAll()
         {
             try
             {
-                var cryptocurrencies = await currenciesService.SelectAll();
+                List<CurrencyModel> cryptocurrencies = await currenciesService.SelectAll();
 
-                if (cryptocurrencies == null || cryptocurrencies.Count == 0)
-                {
-                    return NotFound("No cryptocurrencies found");
-                }
+                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+        }
 
-                return Ok(cryptocurrencies);
+        [HttpGet]
+        [Route("externalApi")]
+        public async Task<ActionResult<List<CurrencyModel>>> GetAsync()
+        {
+            try
+            {
+                ExternalApiService cryptoCurrenciesService = new(HttpContext.RequestServices.GetRequiredService<HttpClient>());
+                List<CurrencyModel> cryptocurrencies = await cryptoCurrenciesService.GetCryptocurrenciesAsync();
 
+                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
@@ -43,19 +55,13 @@ namespace CryptoCurrencyDemoProject.Controllers
 
         [HttpGet]
         [Route("trending")]
-        public async Task<ActionResult<List<CryptocurrencyModel>>> SelectTrendingCryptocurrencie()
+        public async Task<ActionResult<List<CurrencyModel>>> SelectTrendingCryptocurrencie()
         {
             try
             {
-                var cryptocurrencies = await currenciesService.GetTrendingCryptocurrenciesAsync();
+                List<CurrencyModel> cryptocurrencies = await currenciesService.GetTrendingCryptocurrenciesAsync();
 
-                if (cryptocurrencies == null || cryptocurrencies.Count == 0)
-                {
-                    return NotFound("No cryptocurrencies found");
-                }
-
-                return Ok(cryptocurrencies);
-
+                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
@@ -66,19 +72,13 @@ namespace CryptoCurrencyDemoProject.Controllers
 
         [HttpGet]
         [Route("volumeLeaders")]
-        public async Task<ActionResult<List<CryptocurrencyModel>>> SelectVolumeLeadersCryptocurrencie()
+        public async Task<ActionResult<List<CurrencyModel>>> SelectVolumeLeadersCryptocurrencie()
         {
             try
             {
-                var cryptocurrencies = await currenciesService.GetVolumeLeadersCryptocurrenciesAsync();
+                List<CurrencyModel> cryptocurrencies = await currenciesService.GetVolumeLeadersCryptocurrenciesAsync();
 
-                if (cryptocurrencies == null || cryptocurrencies.Count == 0)
-                {
-                    return NotFound("No cryptocurrencies found");
-                }
-
-                return Ok(cryptocurrencies);
-
+                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
@@ -88,22 +88,19 @@ namespace CryptoCurrencyDemoProject.Controllers
         }
 
         [HttpGet("{page}")]
-        public async Task<ActionResult<List<CryptocurrencyModel>>> SelectPage(int page)
+        public async Task<ActionResult<List<CurrencyModel>>> SelectPage(int page)
         {
             try
             {
-                var cryptocurrencies = await currenciesService.SelectPage(page);
+                PaginationResponse<CurrencyModel> cryptocurrencies = await currenciesService.SelectPage(page);
 
-                if (cryptocurrencies == null || cryptocurrencies.Data.Count == 0)
-                {
-                    return NotFound("No cryptocurrencies found");
-                }
-
-                return Ok(new PaginationResponse<CryptocurrencyModel>
-                {
-                    Data = cryptocurrencies.Data,
-                    TotalPages = cryptocurrencies.TotalPages
-                });
+                return cryptocurrencies == null || cryptocurrencies.Data.Count == 0
+                    ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found")
+                    : (ActionResult<List<CurrencyModel>>)Ok(new PaginationResponse<CurrencyModel>
+                    {
+                        Data = cryptocurrencies.Data,
+                        TotalPages = cryptocurrencies.TotalPages
+                    });
             }
             catch (Exception ex)
             {
@@ -151,11 +148,11 @@ namespace CryptoCurrencyDemoProject.Controllers
 
         // PUT api/<CurrenciesController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(string id, [FromBody] CryptocurrencyModel cryptocurrencyModel)
+        public ActionResult Put(string id, [FromBody] CurrencyModel cryptocurrencyModel)
         {
             try
             {
-                var existingCurrency = currenciesService.Get(id);
+                CurrencyModel existingCurrency = currenciesService.Get(id);
                 if (existingCurrency == null)
                 {
                     return NotFound($"CurrencyModel with id = {id} not found");
@@ -177,15 +174,15 @@ namespace CryptoCurrencyDemoProject.Controllers
         {
             try
             {
-                CryptoCurrenciesService cryptoCurrenciesService = new CryptoCurrenciesService(HttpContext.RequestServices.GetRequiredService<HttpClient>());
-                var cryptocurrencies = await cryptoCurrenciesService.GetCryptocurrenciesAsync();
+                ExternalApiService cryptoCurrenciesService = new(HttpContext.RequestServices.GetRequiredService<HttpClient>());
+                List<CurrencyModel> cryptocurrencies = await cryptoCurrenciesService.GetCryptocurrenciesAsync();
 
                 if (cryptocurrencies == null || cryptocurrencies.Count == 0)
                 {
                     return NotFound("No cryptocurrencies found");
                 }
 
-                await currenciesService.InsertManyAsync(cryptocurrencies);
+                _ = await currenciesService.InsertManyAsync(cryptocurrencies);
                 return Ok("The database is updated from the external API");
             }
             catch (Exception ex)
@@ -201,7 +198,7 @@ namespace CryptoCurrencyDemoProject.Controllers
         {
             try
             {
-                var existingCurrency = currenciesService.Get(id);
+                CurrencyModel existingCurrency = currenciesService.Get(id);
                 if (existingCurrency == null)
                 {
                     return NotFound($"CurrencyModel with id = {id} not found");

@@ -1,6 +1,6 @@
 ﻿using CryptoCurrencyDemoProject.Data.Interfaces;
 
-namespace CryptoCurrencyDemoProject.Data
+namespace CryptoCurrencyDemoProject.Data.Settings
 {
     public class CurrenciesDatabaseSettings : ICurrenciesDatabaseSettings
     {

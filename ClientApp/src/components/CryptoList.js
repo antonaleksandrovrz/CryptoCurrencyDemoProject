@@ -10,7 +10,7 @@ const CryptoList = () => {
         const fetchData = async () => {
             try {
                 // Fetch data from the API endpoint
-                const response = await fetch('cryptocurrencies');  // Update the URL
+                const response = await fetch('/api/Currencies/externalApi');  // Update the URL
                 const data = await response.json();
 
                 setCryptocurrencies(data);

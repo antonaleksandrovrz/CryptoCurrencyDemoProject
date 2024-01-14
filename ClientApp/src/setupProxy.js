@@ -5,7 +5,6 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
   env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:50846';
 
 const context =  [
-    "/cryptocurrencies",
     "/api/Currencies"
 ];
 

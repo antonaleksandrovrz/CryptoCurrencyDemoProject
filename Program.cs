@@ -1,10 +1,10 @@
-using CryptoCurrencyDemoProject.Data;
 using CryptoCurrencyDemoProject.Data.Interfaces;
 using CryptoCurrencyDemoProject.Data.Services;
+using CryptoCurrencyDemoProject.Data.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 // Add services to the container.
 
@@ -14,15 +14,15 @@ builder.Services.Configure<CurrenciesDatabaseSettings>(builder.Configuration.Get
 builder.Services.AddSingleton<ICurrenciesDatabaseSettings>(cd => cd.GetRequiredService<IOptions<CurrenciesDatabaseSettings>>().Value);
 builder.Services.AddSingleton<IMongoClient>(s => new MongoClient(builder.Configuration.GetValue<string>("CurrenciesDatabaseSettings:ConnectionString")));
 
-builder.Services.AddScoped<ICurrenciesService, CurrenciesService>();
+builder.Services.AddScoped<ICurrenciesService, CurrencyService>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    _ = app.UseHsts();
 }
 
 app.UseHttpsRedirection();

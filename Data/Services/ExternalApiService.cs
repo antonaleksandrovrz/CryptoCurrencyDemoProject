@@ -1,29 +1,28 @@
 ﻿using CryptoCurrencyDemoProject.Data.Models;
 using Newtonsoft.Json.Linq;
-using System;
 
-namespace CryptoCurrencyDemoProject.Services
+namespace CryptoCurrencyDemoProject.Data.Services
 {
-    public class CryptoCurrenciesService
+    public class ExternalApiService
     {
         private readonly HttpClient _httpClient;
 
-        public CryptoCurrenciesService(HttpClient httpClient)
+        public ExternalApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
-        public async Task<List<CryptocurrencyModel>> GetCryptocurrenciesAsync()
+        public async Task<List<CurrencyModel>> GetCryptocurrenciesAsync()
         {
             try
             {
-                var apiUrl = "https://api.coincap.io/v2/assets";
-                var response = await _httpClient.GetStringAsync(apiUrl);
-                var jsonResponse = JObject.Parse(response);
+                string apiUrl = "https://api.coincap.io/v2/assets";
+                string response = await _httpClient.GetStringAsync(apiUrl);
+                JObject jsonResponse = JObject.Parse(response);
 
                 if (jsonResponse["data"] is JArray data)
                 {
-                    var cryptocurrencies = data.ToObject<List<CryptocurrencyModel>>();
+                    List<CurrencyModel>? cryptocurrencies = data.ToObject<List<CurrencyModel>>();
 
                     if (cryptocurrencies != null && cryptocurrencies.Count > 0)
                     {
@@ -32,7 +31,7 @@ namespace CryptoCurrencyDemoProject.Services
                 }
 
                 Console.WriteLine("Error: Unexpected or null data.");
-                return new List<CryptocurrencyModel>();
+                return new List<CurrencyModel>();
             }
             catch (Exception ex)
             {

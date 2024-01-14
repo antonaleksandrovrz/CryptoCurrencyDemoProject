@@ -9,6 +9,9 @@ Pagination: Navigate through the list of cryptocurrencies using a paginated inte
 Update from API: Fetch the latest cryptocurrency data from an external API and update the database.
 
 Technologies Used
+
 Frontend: React
+
 Backend: ASP.NET Core
+
 Database: MongoDB

@@ -109,43 +109,7 @@ namespace CryptoCurrencyDemoProject.Controllers
             }
         }
 
-        //// GET api/<CurrenciesController>/5
-        //[HttpGet("{id}")]
-        //public ActionResult<CryptocurrencyModel> Get(string id)
-        //{
-        //    try
-        //    {
-        //        var currencyModel = currenciesService.Get(id);
-
-        //        if (currencyModel == null)
-        //        {
-        //            return NotFound($"CurrencyModel with id = {id} not found");
-        //        }
-        //        return currencyModel;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        return StatusCode(500, "Internal server error: " + ex.Message);
-        //    }
-        //}
-
-        //// POST api/<CurrenciesController>
-        //[HttpPost]
-        //public ActionResult<CryptocurrencyModel> Post([FromBody] CryptocurrencyModel cryptocurrencyModel)
-        //{
-        //    try
-        //    {
-        //        currenciesService.Insert(cryptocurrencyModel);
-        //        return CreatedAtAction(nameof(Get), new { id = cryptocurrencyModel.Id }, cryptocurrencyModel);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        return StatusCode(500, "Internal server error: " + ex.Message);
-        //    }
-        //}
-
+        
         // PUT api/<CurrenciesController>/5
         [HttpPut("{id}")]
         public ActionResult Put(string id, [FromBody] CurrencyModel cryptocurrencyModel)

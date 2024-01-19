@@ -118,11 +118,7 @@ namespace CryptoCurrencyDemoProject.Controllers
             }
         }
 
-<<<<<<< HEAD
-=======
-        
         // PUT api/<CurrenciesController>/5
->>>>>>> 240388f74a38d7edba8d875775bdd044e1a8f94e
         [HttpPut("{id}")]
         public ActionResult Put(string id, [FromBody] CurrencyModel cryptocurrencyModel)
         {

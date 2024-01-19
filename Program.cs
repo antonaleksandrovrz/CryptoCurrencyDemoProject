@@ -6,14 +6,24 @@ using MongoDB.Driver;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
-// Add services to the container.
+//configuration
+builder.Services.Configure<ExternalApiSettings>(builder.Configuration.GetSection(nameof(ExternalApiSettings)));
+builder.Services.AddSingleton<IExternalApiSettings>(cd => cd.GetRequiredService<IOptions<ExternalApiSettings>>().Value);
+//dependancies
+builder.Services.AddTransient<IExternalApiService, ExternalApiService>();
+builder.Services.AddTransient<HttpClient>(provider =>
+{
+    var httpClient = new HttpClient();
+    return httpClient;
+});
 
 builder.Services.AddControllersWithViews();
 
+//configuration
 builder.Services.Configure<CurrenciesDatabaseSettings>(builder.Configuration.GetSection(nameof(CurrenciesDatabaseSettings)));
 builder.Services.AddSingleton<ICurrenciesDatabaseSettings>(cd => cd.GetRequiredService<IOptions<CurrenciesDatabaseSettings>>().Value);
 builder.Services.AddSingleton<IMongoClient>(s => new MongoClient(builder.Configuration.GetValue<string>("CurrenciesDatabaseSettings:ConnectionString")));
-
+//dependancies
 builder.Services.AddScoped<ICurrenciesService, CurrencyService>();
 
 WebApplication app = builder.Build();

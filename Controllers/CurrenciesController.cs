@@ -12,10 +12,12 @@ namespace CryptoCurrencyDemoProject.Controllers
     public class CurrenciesController : ControllerBase
     {
         private readonly ICurrenciesService currenciesService;
+        private readonly IExternalApiService externalApiService;
 
-        public CurrenciesController(ICurrenciesService currenciesService)
+        public CurrenciesController(ICurrenciesService currenciesService,IExternalApiService externalApiService)
         {
             this.currenciesService = currenciesService;
+            this.externalApiService = externalApiService;
         }
 
         // GET: api/<CurrenciesController>
@@ -25,34 +27,47 @@ namespace CryptoCurrencyDemoProject.Controllers
             try
             {
                 List<CurrencyModel> cryptocurrencies = await currenciesService.SelectAll();
-
-                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
+                return Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
+        // GET: api/<CurrenciesController>/externalApi
         [HttpGet]
         [Route("externalApi")]
+        
         public async Task<ActionResult<List<CurrencyModel>>> GetAsync()
         {
             try
             {
-                ExternalApiService cryptoCurrenciesService = new(HttpContext.RequestServices.GetRequiredService<HttpClient>());
-                List<CurrencyModel> cryptocurrencies = await cryptoCurrenciesService.GetCryptocurrenciesAsync();
-
-                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
+                List<CurrencyModel> cryptocurrencies = await externalApiService.GetCryptocurrenciesAsync();
+                return Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
+        // PUT api/<CurrenciesController>/
+        [HttpPut]
+        public async Task<ActionResult> UpdateFromAPIAsync()
+        {
+            try
+            {
+                List<CurrencyModel> cryptocurrencies = await externalApiService.GetCryptocurrenciesAsync();
+                return Ok(cryptocurrencies);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+        }
+
+        // GET: api/<CurrenciesController>/trending
         [HttpGet]
         [Route("trending")]
         public async Task<ActionResult<List<CurrencyModel>>> SelectTrendingCryptocurrencie()
@@ -60,16 +75,15 @@ namespace CryptoCurrencyDemoProject.Controllers
             try
             {
                 List<CurrencyModel> cryptocurrencies = await currenciesService.GetTrendingCryptocurrenciesAsync();
-
-                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
+                return Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
+        // GET: api/<CurrenciesController>/volumeLeaders
         [HttpGet]
         [Route("volumeLeaders")]
         public async Task<ActionResult<List<CurrencyModel>>> SelectVolumeLeadersCryptocurrencie()
@@ -77,117 +91,48 @@ namespace CryptoCurrencyDemoProject.Controllers
             try
             {
                 List<CurrencyModel> cryptocurrencies = await currenciesService.GetVolumeLeadersCryptocurrenciesAsync();
-
-                return cryptocurrencies == null || cryptocurrencies.Count == 0 ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found") : (ActionResult<List<CurrencyModel>>)Ok(cryptocurrencies);
+                return Ok(cryptocurrencies);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
+        // GET: api/<CurrenciesController>/5
         [HttpGet("{page}")]
         public async Task<ActionResult<List<CurrencyModel>>> SelectPage(int page)
         {
             try
             {
                 PaginationResponse<CurrencyModel> cryptocurrencies = await currenciesService.SelectPage(page);
-
-                return cryptocurrencies == null || cryptocurrencies.Data.Count == 0
-                    ? (ActionResult<List<CurrencyModel>>)NotFound("No cryptocurrencies found")
-                    : (ActionResult<List<CurrencyModel>>)Ok(new PaginationResponse<CurrencyModel>
-                    {
-                        Data = cryptocurrencies.Data,
-                        TotalPages = cryptocurrencies.TotalPages
-                    });
+                return Ok(new PaginationResponse<CurrencyModel>
+                {
+                    Data = cryptocurrencies.Data,
+                    TotalPages = cryptocurrencies.TotalPages
+                });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
 
-        //// GET api/<CurrenciesController>/5
-        //[HttpGet("{id}")]
-        //public ActionResult<CryptocurrencyModel> Get(string id)
-        //{
-        //    try
-        //    {
-        //        var currencyModel = currenciesService.Get(id);
-
-        //        if (currencyModel == null)
-        //        {
-        //            return NotFound($"CurrencyModel with id = {id} not found");
-        //        }
-        //        return currencyModel;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        return StatusCode(500, "Internal server error: " + ex.Message);
-        //    }
-        //}
-
-        //// POST api/<CurrenciesController>
-        //[HttpPost]
-        //public ActionResult<CryptocurrencyModel> Post([FromBody] CryptocurrencyModel cryptocurrencyModel)
-        //{
-        //    try
-        //    {
-        //        currenciesService.Insert(cryptocurrencyModel);
-        //        return CreatedAtAction(nameof(Get), new { id = cryptocurrencyModel.Id }, cryptocurrencyModel);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //        return StatusCode(500, "Internal server error: " + ex.Message);
-        //    }
-        //}
-
+<<<<<<< HEAD
+=======
+        
         // PUT api/<CurrenciesController>/5
+>>>>>>> 240388f74a38d7edba8d875775bdd044e1a8f94e
         [HttpPut("{id}")]
         public ActionResult Put(string id, [FromBody] CurrencyModel cryptocurrencyModel)
         {
             try
             {
-                CurrencyModel existingCurrency = currenciesService.Get(id);
-                if (existingCurrency == null)
-                {
-                    return NotFound($"CurrencyModel with id = {id} not found");
-                }
-
                 currenciesService.Update(id, cryptocurrencyModel);
-                return NoContent();
+                return Ok($"CurrencyModel with id = {id} is updated.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal server error: " + ex.Message);
-            }
-        }
-
-        // PUT api/<CurrenciesController>/5
-        [HttpPut]
-        public async Task<ActionResult> UpdateFromAPIAsync()
-        {
-            try
-            {
-                ExternalApiService cryptoCurrenciesService = new(HttpContext.RequestServices.GetRequiredService<HttpClient>());
-                List<CurrencyModel> cryptocurrencies = await cryptoCurrenciesService.GetCryptocurrenciesAsync();
-
-                if (cryptocurrencies == null || cryptocurrencies.Count == 0)
-                {
-                    return NotFound("No cryptocurrencies found");
-                }
-
-                _ = await currenciesService.InsertManyAsync(cryptocurrencies);
-                return Ok("The database is updated from the external API");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }
@@ -198,18 +143,11 @@ namespace CryptoCurrencyDemoProject.Controllers
         {
             try
             {
-                CurrencyModel existingCurrency = currenciesService.Get(id);
-                if (existingCurrency == null)
-                {
-                    return NotFound($"CurrencyModel with id = {id} not found");
-                }
-
                 currenciesService.Remove(id);
                 return Ok($"CurrencyModel with id = {id} is deleted.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error: " + ex.Message);
             }
         }

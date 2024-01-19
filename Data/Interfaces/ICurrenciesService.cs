@@ -9,7 +9,7 @@ namespace CryptoCurrencyDemoProject.Data.Interfaces
         CurrencyModel Get(string id);
         Task<List<CurrencyModel>> GetTrendingCryptocurrenciesAsync();
         Task<List<CurrencyModel>> GetVolumeLeadersCryptocurrenciesAsync();
-        bool Insert(CurrencyModel cryptocurrencyModel);
+        void Insert(CurrencyModel cryptocurrencyModel);
         Task<bool> InsertManyAsync(List<CurrencyModel> cryptocurrencyModels);
         void Update(string id, CurrencyModel cryptocurrencyModel);
         void Remove(string id);

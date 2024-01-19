@@ -14,16 +14,15 @@ namespace CryptoCurrencyDemoProject.Data.Services
             cryptoCurrencies = database.GetCollection<CurrencyModel>(databaseSettings.CurrenciesCollection);
         }
 
-        public bool Insert(CurrencyModel cryptocurrencyData)
+        public void Insert(CurrencyModel cryptocurrencyData)
         {
             try
             {
                 cryptoCurrencies.InsertOne(cryptocurrencyData);
-                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception($"Failed to insert single cryptocurrencyData. Ex message:{ex.Message}");
             }
         }
 
@@ -33,78 +32,156 @@ namespace CryptoCurrencyDemoProject.Data.Services
             {
                 FilterDefinition<CurrencyModel> filter = Builders<CurrencyModel>.Filter.Empty; // Empty filter matches all documents
                 _ = await cryptoCurrencies.DeleteManyAsync(filter);
-
                 await cryptoCurrencies.InsertManyAsync(cryptocurrencyModels);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception($"Failed to insert multiple cryptocurrencyData. Ex message:{ex.Message}");
             }
         }
 
         public async Task<List<CurrencyModel>> SelectAll()
         {
-            List<CurrencyModel> result = await cryptoCurrencies.Find(cryptoCurrency => true).ToListAsync();
-            return result;
+            try
+            {
+                List<CurrencyModel> result = await cryptoCurrencies.Find(cryptoCurrency => true).ToListAsync();
+                if(result.Count == 0)
+                {
+                    throw new Exception("No cryptocurrency Found");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to select cryptocurrencyData. Ex message:{ex.Message}");
+            }
+            
         }
 
         public async Task<PaginationResponse<CurrencyModel>> SelectPage(int page = 1, int pageSize = 9)
         {
-            int skipCount = (page - 1) * pageSize;
-            long totalItems = await cryptoCurrencies.CountDocumentsAsync(Builders<CurrencyModel>.Filter.Empty);
-
-            List<CurrencyModel> result = await cryptoCurrencies
-                .Find(cryptoCurrency => true)
-                .Skip(skipCount)
-                .Limit(pageSize)
-                .ToListAsync();
-
-            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-            return new PaginationResponse<CurrencyModel>
+            try
             {
-                Data = result,
-                TotalPages = totalPages
-            };
+                int skipCount = (page - 1) * pageSize;
+                long totalItems = await cryptoCurrencies.CountDocumentsAsync(Builders<CurrencyModel>.Filter.Empty);
+
+                List<CurrencyModel> result = await cryptoCurrencies
+                    .Find(cryptoCurrency => true)
+                    .Skip(skipCount)
+                    .Limit(pageSize)
+                    .ToListAsync();
+
+                int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+                if (result.Count == 0)
+                {
+                    throw new Exception("No cryptocurrency Found");
+                }
+
+                return new PaginationResponse<CurrencyModel>
+                {
+                    Data = result,
+                    TotalPages = totalPages
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to select cryptocurrencyData page. Ex message:{ex.Message}");
+            }
         }
 
 
         public CurrencyModel Get(string id)
         {
-            return cryptoCurrencies.Find(cryptoCurrency => cryptoCurrency.Id == id).FirstOrDefault();
+            try
+            {
+                CurrencyModel currency = cryptoCurrencies.Find(cryptoCurrency => cryptoCurrency.Id == id).FirstOrDefault();
+
+                if (currency == null)
+                {
+                    throw new Exception($"No currency found with id: {id}");
+                }
+
+                return currency;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get cryptocurrencyData. Ex message:{ex.Message}");
+            }
+            
         }
 
         public void Remove(string id)
         {
-            _ = cryptoCurrencies.DeleteOne(cryptoCurrency => cryptoCurrency.Id == id);
+            try
+            {
+                cryptoCurrencies.DeleteOne(cryptoCurrency => cryptoCurrency.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to remove cryptocurrencyData. Ex message:{ex.Message}");
+            }
+            
         }
 
         public void Update(string id, CurrencyModel cryptocurrencyModel)
         {
-            _ = cryptoCurrencies.ReplaceOne(cryptoCurrency => cryptoCurrency.Id == id, cryptocurrencyModel);
+            try
+            {
+                cryptoCurrencies.ReplaceOne(cryptoCurrency => cryptoCurrency.Id == id, cryptocurrencyModel);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to update cryptocurrencyData. Ex message:{ex.Message}");
+            }
+            
         }
 
         public async Task<List<CurrencyModel>> GetTrendingCryptocurrenciesAsync()
         {
-            List<CurrencyModel> result = await cryptoCurrencies
+            try
+            {
+                List<CurrencyModel> result = await cryptoCurrencies
                 .Find(cryptoCurrency => cryptoCurrency.ChangePercent24Hr > 0)
                 .SortByDescending(cryptoCurrency => cryptoCurrency.ChangePercent24Hr)
                 .Limit(9)
                 .ToListAsync();
 
-            return result;
+                if (result == null || result.Count == 0)
+                {
+                    throw new Exception($"No cryptocurrencyData found.");
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get trending cryptocurrencyData. Ex message:{ex.Message}");
+            }
         }
 
         public async Task<List<CurrencyModel>> GetVolumeLeadersCryptocurrenciesAsync()
         {
-            List<CurrencyModel> result = await cryptoCurrencies
+            try
+            {
+                List<CurrencyModel> result = await cryptoCurrencies
                 .Find(cryptoCurrency => cryptoCurrency.VolumeUsd24Hr > 0)
                 .SortByDescending(cryptoCurrency => cryptoCurrency.VolumeUsd24Hr)
                 .Limit(9)
                 .ToListAsync();
 
-            return result;
+                if (result == null || result.Count == 0)
+                {
+                    throw new Exception($"No cryptocurrencyData found.");
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to get leading cryptocurrencyData. Ex message:{ex.Message}");
+            }
         }
 
     }

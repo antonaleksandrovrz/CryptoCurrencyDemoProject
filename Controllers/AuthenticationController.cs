@@ -1,6 +1,6 @@
-﻿using CryptoCurrencyDemoProject.Data.DummyData;
-using CryptoCurrencyDemoProject.Data.Interfaces;
-using CryptoCurrencyDemoProject.Data.Models;
+﻿using CryptoCurrencyDemoProjectTest.Data.DummyData;
+using CryptoCurrencyDemoProjectTest.Data.Interfaces;
+using CryptoCurrencyDemoProjectTest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace CryptoCurrencyDemoProject.Controllers
+namespace CryptoCurrencyDemoProjectTest.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

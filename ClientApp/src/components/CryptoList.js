@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import CurrencieCard from './CurrencieCard';
 
 const CryptoList = () => {
+
+
     const [cryptocurrencies, setCryptocurrencies] = useState([]);
     const [errorMessage, setErrorMessage] = useState(null); // Add error message state
 
@@ -34,6 +36,8 @@ const CryptoList = () => {
                     setCryptocurrencies(data);
                     setErrorMessage(null); // Clear error message if fetching is successful
                 }
+
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setErrorMessage('Error fetching data. Please try again.'); // General error message
@@ -41,7 +45,28 @@ const CryptoList = () => {
         };
 
         fetchData();
+        // Update every 10 minutes (600,000 milliseconds)
+        const updateIntervalId = setInterval(async () => {
+            try {
+                const response = await fetch('api/Currencies', {
+                    method: 'PUT',
+                });
+
+                if (response.ok) {
+                    fetchData(); // Refresh the data after the update
+                } else {
+                    console.error('Error updating data:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error updating data:', error);
+            }
+        }, 6000);
+
+        // Clean up the interval when the component is unmounted
+        return () => clearInterval(updateIntervalId);
+
     }, []);
+
 
     return (
         <div className="container">

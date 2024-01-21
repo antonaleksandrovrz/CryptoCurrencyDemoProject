@@ -1,6 +1,6 @@
-using CryptoCurrencyDemoProject.Data.Interfaces;
-using CryptoCurrencyDemoProject.Data.Services;
-using CryptoCurrencyDemoProject.Data.Settings;
+using CryptoCurrencyDemoProjectTest.Data.Interfaces;
+using CryptoCurrencyDemoProjectTest.Data.Services;
+using CryptoCurrencyDemoProjectTest.Data.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

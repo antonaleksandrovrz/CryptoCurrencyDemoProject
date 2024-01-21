@@ -1,6 +1,6 @@
-﻿using CryptoCurrencyDemoProject.Data.Models;
+﻿using CryptoCurrencyDemoProjectTest.Data.Models;
 
-namespace CryptoCurrencyDemoProject.Data.DummyData
+namespace CryptoCurrencyDemoProjectTest.Data.DummyData
 {
     public class UsersDummyDB
     {

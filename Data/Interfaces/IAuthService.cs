@@ -1,11 +1,11 @@
-﻿using CryptoCurrencyDemoProject.Data.DummyData;
-using CryptoCurrencyDemoProject.Data.Models;
+﻿using CryptoCurrencyDemoProjectTest.Data.DummyData;
+using CryptoCurrencyDemoProjectTest.Data.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace CryptoCurrencyDemoProject.Data.Interfaces
+namespace CryptoCurrencyDemoProjectTest.Data.Interfaces
 {
     public interface IAuthService
     {

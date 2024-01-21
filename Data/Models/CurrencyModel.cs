@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-namespace CryptoCurrencyDemoProject.Data.Models
+namespace CryptoCurrencyDemoProjectTest.Data.Models
 {
     [BsonIgnoreExtraElements]
     public class CurrencyModel

@@ -1,11 +1,11 @@
-﻿using CryptoCurrencyDemoProject.Data.Interfaces;
-using CryptoCurrencyDemoProject.Data.Models;
+﻿using CryptoCurrencyDemoProjectTest.Data.Interfaces;
+using CryptoCurrencyDemoProjectTest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace CryptoCurrencyDemoProject.Controllers
+namespace CryptoCurrencyDemoProjectTest.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -59,7 +59,12 @@ namespace CryptoCurrencyDemoProject.Controllers
             try
             {
                 List<CurrencyModel> cryptocurrencies = await externalApiService.GetCryptocurrenciesAsync();
-                return Ok(cryptocurrencies);
+                if(await currenciesService.InsertManyAsync(cryptocurrencies))
+                {
+                    return Ok(cryptocurrencies);
+                }
+
+                throw new Exception("Failed to update the database");
             }
             catch (Exception ex)
             {

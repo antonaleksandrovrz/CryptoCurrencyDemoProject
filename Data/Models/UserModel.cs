@@ -1,4 +1,4 @@
-﻿namespace CryptoCurrencyDemoProject.Data.Models
+﻿namespace CryptoCurrencyDemoProjectTest.Data.Models
 {
     public class UserModel
     {

@@ -1,6 +1,6 @@
-﻿using CryptoCurrencyDemoProject.Data.Models;
+﻿using CryptoCurrencyDemoProjectTest.Data.Models;
 
-namespace CryptoCurrencyDemoProject.Data.Interfaces
+namespace CryptoCurrencyDemoProjectTest.Data.Interfaces
 {
     public interface IExternalApiService
     {

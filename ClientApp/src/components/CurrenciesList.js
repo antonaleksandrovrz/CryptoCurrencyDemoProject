@@ -21,21 +21,6 @@ const CurrenciesList = () => {
         }
     };
 
-    const handleUpdateClick = async () => {
-        try {
-            const response = await fetch('api/Currencies', {
-                method: 'PUT',
-            });
-            if (response.ok) {
-                fetchData(); // Refresh the data after the update
-            } else {
-                console.error('Error updating data:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error updating data:', error);
-        }
-    };
-
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
@@ -60,7 +45,7 @@ const CurrenciesList = () => {
             } catch (error) {
                 console.error('Error updating data:', error);
             }
-        }, 600000);
+        }, 120000);
 
         // Clean up the interval when the component is unmounted
         return () => clearInterval(updateIntervalId);

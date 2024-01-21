@@ -1,8 +1,8 @@
-﻿using CryptoCurrencyDemoProject.Data.Interfaces;
-using CryptoCurrencyDemoProject.Data.Models;
+﻿using CryptoCurrencyDemoProjectTest.Data.Interfaces;
+using CryptoCurrencyDemoProjectTest.Data.Models;
 using MongoDB.Driver;
 
-namespace CryptoCurrencyDemoProject.Data.Services
+namespace CryptoCurrencyDemoProjectTest.Data.Services
 {
     public class CurrencyService : ICurrenciesService
     {

@@ -4,6 +4,7 @@ import CurrenciesList from "./components/CurrenciesList";
 import CurrenciesTrending from "./components/CurrenciesTrending";
 import CurrenciesVolumeLeaders from "./components/CurrenciesVolumeLeaders";
 import { Home } from "./components/Home";
+import Login from "./components/Login";
 
 const AppRoutes = [
     {
@@ -28,6 +29,11 @@ const AppRoutes = [
     {
         path: '/currencies/volumeLeaders',
         element: <CurrenciesVolumeLeaders />
+    },
+    ,
+    {
+        path: '/authentication',
+        element: <Login />
     }
 ];
 

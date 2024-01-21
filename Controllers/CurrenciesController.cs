@@ -1,6 +1,6 @@
 ﻿using CryptoCurrencyDemoProject.Data.Interfaces;
 using CryptoCurrencyDemoProject.Data.Models;
-using CryptoCurrencyDemoProject.Data.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -36,9 +36,9 @@ namespace CryptoCurrencyDemoProject.Controllers
         }
 
         // GET: api/<CurrenciesController>/externalApi
-        [HttpGet]
+        [Authorize(Roles = "Administrator")]
+        [HttpGet("Admins")]
         [Route("externalApi")]
-        
         public async Task<ActionResult<List<CurrencyModel>>> GetAsync()
         {
             try
@@ -68,6 +68,7 @@ namespace CryptoCurrencyDemoProject.Controllers
         }
 
         // GET: api/<CurrenciesController>/trending
+        [Authorize(Roles = "Guest")]
         [HttpGet]
         [Route("trending")]
         public async Task<ActionResult<List<CurrencyModel>>> SelectTrendingCryptocurrencie()

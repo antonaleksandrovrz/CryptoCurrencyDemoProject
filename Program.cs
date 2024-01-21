@@ -1,15 +1,18 @@
 using CryptoCurrencyDemoProject.Data.Interfaces;
 using CryptoCurrencyDemoProject.Data.Services;
 using CryptoCurrencyDemoProject.Data.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
-//configuration
+
+//externalApi
 builder.Services.Configure<ExternalApiSettings>(builder.Configuration.GetSection(nameof(ExternalApiSettings)));
 builder.Services.AddSingleton<IExternalApiSettings>(cd => cd.GetRequiredService<IOptions<ExternalApiSettings>>().Value);
-//dependancies
 builder.Services.AddTransient<IExternalApiService, ExternalApiService>();
 builder.Services.AddTransient<HttpClient>(provider =>
 {
@@ -17,13 +20,31 @@ builder.Services.AddTransient<HttpClient>(provider =>
     return httpClient;
 });
 
+//authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["AuthSettings:Issuer"],
+            ValidAudience = builder.Configuration["AuthSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AuthSettings:Key"]))
+        };
+    });
+
+builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection(nameof(AuthSettings)));
+builder.Services.AddSingleton<IAuthSettings>(cd => cd.GetRequiredService<IOptions<AuthSettings>>().Value);
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddControllersWithViews();
 
-//configuration
+//Currencies
 builder.Services.Configure<CurrenciesDatabaseSettings>(builder.Configuration.GetSection(nameof(CurrenciesDatabaseSettings)));
 builder.Services.AddSingleton<ICurrenciesDatabaseSettings>(cd => cd.GetRequiredService<IOptions<CurrenciesDatabaseSettings>>().Value);
 builder.Services.AddSingleton<IMongoClient>(s => new MongoClient(builder.Configuration.GetValue<string>("CurrenciesDatabaseSettings:ConnectionString")));
-//dependancies
 builder.Services.AddScoped<ICurrenciesService, CurrencyService>();
 
 WebApplication app = builder.Build();
@@ -38,6 +59,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

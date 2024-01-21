@@ -7,19 +7,19 @@ namespace CryptoCurrencyDemoProject.Data.Services
     public class ExternalApiService : IExternalApiService
     {
         private readonly HttpClient _httpClient;
-        private readonly IExternalApiSettings _externalApiService;
+        private readonly IExternalApiSettings externalApiSettings;
 
         public ExternalApiService(IExternalApiSettings externalApiSettings,HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _externalApiService = externalApiSettings;
+            this.externalApiSettings = externalApiSettings;
         }
 
         public async Task<List<CurrencyModel>> GetCryptocurrenciesAsync()
         {
             try
             {
-                string response = await _httpClient.GetStringAsync(_externalApiService.ApiEndpoint);
+                string response = await _httpClient.GetStringAsync(externalApiSettings.ApiEndpoint);
                 JObject jsonResponse = JObject.Parse(response);
 
                 if (jsonResponse["data"] is JArray data)

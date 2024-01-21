@@ -70,3 +70,6 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html"); ;
 
 app.Run();
+
+//Needed for the tests
+public partial class Program { }
